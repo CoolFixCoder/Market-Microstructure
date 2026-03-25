@@ -1,0 +1,153 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Mar 20 17:14:32 2026
+
+@author: mahesh ubale
+Almgren-Chriss Optimal Execution Model
+The Almgren-Chriss model is one of the most important models in optimal trade execution. It provides a mathematical framework to determine how to split a large order over time so that the total trading cost and risk are minimized.
+
+Suppose a trader wants to sell X shares within a time horizon T.
+
+If the trader sells too quickly:
+
+Market impact increases
+Price moves against them
+If the trader sells too slowly:
+
+Market risk increases
+Price may move unfavorably
+
+"""
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import yfinance as yf
+from scipy.linalg import sqrtm
+
+goog = yf.Ticker('GOOG')
+data = goog.history(period ='2mo')
+print(data)
+
+
+average_daily_voulme = np.mean(data['Volume'])
+average_daily_spread =np.mean(data['High']-data['Low'])
+
+sigma = np.std(data['Close'])
+epsilon = average_daily_spread/2
+eta = average_daily_spread/(0.01*average_daily_voulme)
+gamma = average_daily_spread/(0.1*average_daily_volume)
+tau = 1 # no of days
+
+params = {
+    'lambda':1e-08,
+    'sigma':sigma,
+    'epsilon':epsilon,
+    'eta':eta,
+    'gamma':gamma,
+    'tau':tau
+}
+
+print('Parameters:')
+for k,v in params.items();:
+    print('  {}={}'.format(k,v))
+    
+
+class AlmgrenChriss1D:
+    
+    def __init__(self,params):
+        #Initialize Parameters
+        self._lambda= params['lambda']
+        self._sigma=params['sigma']
+        self._epsilon=params['epsilon']
+        self._eta=params['eta']
+        self._gamma=params['gamma']
+        self._tau = params['tau']
+        
+        self._eta_tilda = self._eta-0.5*self._gamma*self._tau
+        
+        #Ensure Quadratic (for optimization)
+        assert self._eta_tilda > 0
+        
+        self._kappa_tilda_squared=(self._lambda*self._sigma**2)/self._eta_tilda
+        
+        self._kappa = np.arccosh(0.5*(self._kappa_tilda_squared*self._tau**2)+1)/self._tau
+        
+        
+    def trajectory(self, X,T):
+        #Optimal liquidation Trajectory
+        ans=[]
+        for t in range(T):
+            x=int(np.sinh(self._kappa*(T-t))/np.sinh(self._kappa*T)*X)
+            ans.append(x)
+        ans.append(0)
+        return np.array(ans)
+    
+    def strategy(self,X,T):
+        #Optimal Liquidation Trade List
+        return np.diff(self.trajectory(X,T))
+    
+X=300000  # No of shares to sell
+T=len(data)  # No of days 41 where I need to sell the X = 300000 shares.
+
+model = AlmgrenChriss1D(params)
+trajectory=model.trajectory(X, T)
+
+plt.figure(figsize=(12,7))
+plt.plot(range(T+1),trajectory,'o-')
+plt.title(f'Optimal Liquidation Trajectory({X} shared in {T} days)',fontsize=4)
+plt.xlabel('Time (days)', fontsize=12)
+plt.ylabel('Number of shares held', fontsize=12)
+plt.show()
+
+
+lambdas =[1e-2,1e-7,1e-8,1e-9,1e-11]
+
+plt.figure(figsize=(12,7))
+for _lambda in lambdas:
+    new_params = params.copy()
+    new_params['lambda'] = _lambda
+    model = AlmgrenChriss1D(new_params)
+    trajectory=model.trajectory(X, T)
+    plt.plot(range(T+1), trajectory,'o-',ms=4,label=f'$\lambda$={_lambda}')
+
+plt.title(f'Optimal Liquidation Trajectory({X} shares in {T} days', fontsize=14)
+plt.xlabel('Time (days) ', fontsize=12)
+plt.ylabel('Number of shares held',fontsize=12)
+plt.legend()
+plt.show()
+
+gammas =[1e-6,1e-5,3e-5,6e-5]
+plt.figure(figsize=(12,7))
+for gamma in gammas:
+    new_params=params.copy()
+    new_params['gamma'] = gamma
+    model = AlmgrenChriss1D(new_params)
+    trajectory=model.trajectory(X, T)
+    plt.plot(range(T+1),trajectory,'o-',ms=4,label=f'$\\gamma$={gamma}')
+
+plt.title(f'Optimal Liquidation Trajectory({X} shares in {T} days)',fontsize=14)
+plt.xlabel('Timd (days)',fontsize=12)
+plt.ylabel('Number of shares held',fontsize=12)
+plt.legend()
+plt.show()
+
+etas =[0.001,0.01,0.1,1]
+
+plt.figure(figsize=(12,7))
+for eta in etas:
+    new_params =params.copy()
+    new_params['eta'] = eta
+    model = AlmgrenChriss1D(new_params)
+    trajectory=model.trajectory(X, T)
+    plt.plot(range(T+1),trajectory,'o-',ms=4,label=f'$eta$={eta}')
+    
+plt.title(f'Optimal Liquidation Trajectory ({x}) shares in {T} days)',fontsize=14)
+plt.xlabel('Time (days) ',fontsize=12)
+plt.ylabel('Number of shares held',fontsize=12)
+plt.legend()
+plt.show()
+
+
+    
+    
+    
