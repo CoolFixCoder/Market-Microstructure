@@ -84,3 +84,134 @@ BENEFITS:
     i.e   Micro Price = Sb.Pa+Sa.Pb/Sa+Sb 
          --Pb & Pa are the best bid & best ask prices
           -- Sb& Sa are the sizes at the best bid & Ask price levels.
+
+#### ORDER BOOK IMBALANCE:    [L2 DATA Needed]
+   -> It is a market microstructure metric measuring the difference b/w buy & sell order volume(liquidity) at various price levels in a limit order book.
+      It serves as a short term indicator of supply-demand disparity & potential price direction, often used in HIGH-FREQUENCY trading to predict price moves
+          IMBn = (Summation(i=1,N)Sbi - Summation(i=1,N)Sai)/ (Summation(i=1,N)Sbi + Summation(i=1,N)Sai)      Note: Only consideres limit orders
+      where :
+          Sbi is the size at the ith best bid price level
+          Sai is the size at the ith best ask price level
+          N is the number of levels to aggregate(e.g N=5 for top 5 levels)
+          IMBn ranges from -1 to 1
+
+    Book imbalance can look at mulitple levels of the order book.
+      +ve values mean there is more cummulatives size in the bid than the offer.
+      -ve values mean there is more cumulative size on the offer
+      -0 means the bid & offer have the same total size
+
+####  ORDER FLOW IMBALANCE:
+    ->Its a measure derived from the limit order book that captures the net pressure of buy & sell orders.
+    ->OFI is strongly CORRELATED with short-term prices movements
+        Delta.p = alpha.OFI + Beta+Epislon(error term)
+
+#### PIN - Probablity of Information: 
+      ->It is a measure of the information asymmetric b/w informed and uninformed trades that builds (flow toxicity)
+
+
+####  MARKET IMPACT  
+  ->It is the price movement caused by your own trades. Large orders moe prices against you.
+#### SLIPPAGE:
+  ->It is difference b/w execution price and decision price
+  ->Why this happens:
+      ->Fast Market Movement
+      ->Low liquidity
+      ->Latency
+      ->Large order size
+
+#### INFORMATION LEAKAGE:
+  ->It happens when other traders detect your trading intention(front running).
+  -> They infer:
+        ->Large buyer in market
+        ->Larege seller in market
+Large funds use ICEBERGS orders
+
+### DARK POOLS: It is b/w two people in private network and trade not revealed in public
+
+####### OPTIMAL EXECUTION:
+->Poor execution kills alpha:
+      ->Maket Impact: Large orders move prices against you
+      ->Slippage:
+      ->Information Leakage
+      ->Opportunity Cost;
+GOAL: Minimize total execution cost = market impact + timing risk + fees
+
+Smart order routing, Adaptive pacing & market awarness essential.
+
+#### LATENCY: 
+    -> It represents the time delay b/w an external market event and the execution of a strategy's response
+    ->Types of Latency: Network Latency, Processing Latency, Exchange latency
+
+#### Market Fragmentation:
+  -> It occures when trading volume for a single security is dispersed across multiple competing venues, including primary exchanges, alternative trading systems(ATSs), and dark pools
+
+#### Transaction Costs:
+  ->Teh toal expenses associated with trading.
+  a] Explicit: Exchange fees, Broker Fees, Regulatory Commissions.
+  b]Implicit : Market Impact, Slippage, Adverse Selection
+
+#### Liquidity Cliffs:
+  ->It refers to a sudden sharp drop in available liquidty at certain price levels in the Limit Order Book(LOB)
+
+
+Strategy: (for Optimal Execution)
+->TWAP
+->VWAP
+->Percent of Volume(PoV) Strategy
+->Order Flow Imbalance
+
+####  ORDER BOOK STRATEGY
+  -> Modern HFT systems use MACHINE LEARNING MODELS trained on the entire limit order book including order placements, modifications, and canellations to predict move
+  ->Custom microstructure indicators are also used.(Like microprice,OBI,OFI)
+
+###Liquidity Gaps
+###Detecting Hidden Demand & Supply(ICEBERS Order)
+###Combining Multiple Signals
+###MLOFI - Multilevel ORder FLow Imbalance(implement it)
+###Fill Probability :
+
+------------------------------------------------------**************************----------------------------------
+###### MARKET MAKER
+-A market maker, also called a liquidity provers, is a firm or individual that continuously provdies quotes - both bids to buy and offers to sell - for a given financial instruments,
+    as primary trading strategy.
+-MM generally come up with their bids & offers by calculating a theoritical price for the given financial instrument and then determining how much credit or margin they need to compensate
+  for the risk they are taking in providing quotes to the market
+
+##INVENTORY:
+  ->It refers to the net position held by the MM in a particular asset
+      ->if a MM buys more than they sell ---> Long inventory
+      ->if they sell more than they buy ---> Short Inventory
+why it matters:
+  ->Larger inventory exposes the MM to price risk
+  ->MM adjust quotes to rebalance inventory
+### INVENTORY SKEW:
+    1] Net Long Inventory      2] Net Short Invetory
+
+Model to adjust price & quantity used is:  AVELLENDA-STOIK MODEL  
+   Reservation Price = midprice - (gamma)(q)(sq(volatity)(T-t)  
+      here gamma = risk, (T-t) time remaining
+WHAT is RESERVATION PRICE:
+   ->It is "Personalized mid price" accoridng to one's inventory, allowing symmetric quotes around this personalized mid-prie to manage inventory risk.
+
+##Volatity Adjusted Spread : (check code)
+##ORDER FLOW TOXICITY:
+    -> How to measure?
+      Metrices to measure order flow toxicity
+        =>Order to Trade Ratios
+        =>Order flow Imbalance
+        =>VPIN
+SOln to this Order Flow Toxicity is : Adjust the quotes and the Spread
+
+### VOLUME SYNCHRONIZED PROBABLITY INFORMED OF TRADING = VPIN
+-> It is a metric measuring "order flow toxicity" which quantifies the riske market makers face from trading with informed trades.
+->HIGH VPIN indicates sever order imbalances and potential adverse selection, after leading to liquidity
+HOW TO CALCULATE VPIN?
+  ->Volume bucket
+  -> Time Frame 1 min
+  ->VBS = volume Bucket Size =   Average Daily Volume/No Of buckets
+   -> No of Buckets  = 50
+  VPIN = Summation(Buy Volume - Sell Volume) in each bucket/No of Buckets * Bucket Size
+          = Summation(OI) 
+
+
+    
