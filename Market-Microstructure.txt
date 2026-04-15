@@ -48,3 +48,39 @@ Market order, Limit order, stop order, stop-limit order,iceberg order,All or Kil
                   -Exchange Members
                   -Brokers
                   -Market Makers
+LEVEL III data typically includes all trades, fills, adds, cancels, modifies(or replaces) book clear events and depending on the venue and dataset, other special order Events
+
+BENEFITS:
+1]More Accurate Passive Order Simulation
+  -L3 data provides order-level details, including individual order Ids and Sizes
+  -This allows precise simulation of queue position and fill probability
+  -As a result, backtesting engines become significantly more realisitic
+  -In contrast, with only L2 data, traders must estimate queue position using moels, which introduces approximation error
+2] Not only for HIGH-FREQUENCY Traders
+  -A common misconception is that L3 data only benefits low-latency or HFT Participants
+  -Even non-latency-sensitive traders benefit from improved backtesting accuracy and execution modelling
+3]Access to New Signal Classes:
+  -L3 data exposes information that cannot be derived from L1 to L2 feeds
+  -for ex, traders can measure how long each order has been resting in that book.
+  -This enables constraction of signals based on:
+    -Order Staleness
+    -Order aging behavior
+    -Liquidity dynamics at the individual order level
+4]Protocol Efficiency and Latency Advantages.
+  -Although L3 data contains more granular information across more price levels, L3 feed protocols are often more optimized than L2 protocols
+  -This can result in
+        -Lower Processing overhead
+        -Reduced Latency
+  -Counterintuitively, depending on implmentation, L2 data may even require more storage than L3 data.
+5]Infrastructure - Based Advantages
+  -Some exchanges intentionally distrubute more granuler feeds through faster infrastructure paths.
+  -This can provide additional latency advantages to L3 data subscribers.
+
+##### MICROPRICE:
+  ->Mid-Price is unrealistic when the volume of limit orders at the best bid and ask prices differ significantly.
+  ->In these cases, microprice can be useful. Since microprice is sensitive to change in the orderbook, it may offers some predictive power for future price movements.
+  ->The microprice is core high-frequency trading metrice that estimates the "fair" price of an asset by adjusting the mid-price based on order book imbalance, reducing the impact
+    of the bid-ask spread. A standard, commonly used formula fo rthe micro-price, utilizing top-of-box(it means L1 data) volumnes
+    i.e   Micro Price = Sb.Pa+Sa.Pb/Sa+Sb 
+         --Pb & Pa are the best bid & best ask prices
+          -- Sb& Sa are the sizes at the best bid & Ask price levels.
