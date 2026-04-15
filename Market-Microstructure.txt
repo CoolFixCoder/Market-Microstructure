@@ -1,0 +1,50 @@
+###Matching Rules - Order Book
+Price & time priority is a matching rule used in electronic order books;
+1] Price-Priority ( First Rule)
+  -Better Price Executed first
+  -Higher bid first(for buyers)
+  -Lower ask first(for sellers)
+2] Time Priority(second rule)
+  -if two orders have the same price
+  -The one entered earlier gets executed first.
+
+###Types of orders
+Market order, Limit order, stop order, stop-limit order,iceberg order,All or Kill[FOK], Immediate or cancel[IOC],Good Till Cancelled[GTC], Day orders, post-only order.
+
+
+-> An ICEBERG order consists of a visible "peak" that is displayed on the order book and a hidden reserve quantity. Once the displayed peak of the ICEBERG executed, it is refreshed
+    with the part of the hidden quantity. This process repeats untile the order fully executed or cancelled.
+->FILL OR KILL[FOK] is used when you absolutely have to get the full quantity of an order filled at specific price.
+->IMMEDIATE OR CANCEL ORDER[IOC]: very similar to FOK. If differs from FOK, in that if only a portion of volume can be executed it will be.
+   IOC order can be fully filled a just partially filled and the balance will be cancelled.
+   FOK must be fully filled it will be killed.
+
+###LIMIT ORDER BOOK 
+  ->Tick Size: Smallest possible price increment b/w two consecutive prices. Ex nifty=0.05
+  ->Minimum Order Size(Lot Size): Smallest quantity of instruments that can be traded.
+  ->Ask Side: All active sell orders in the order book
+  ->Mid Price: Mt=(at+bt)/2 => (Best Bid+Best Ask)/2
+  ->Bid-Ask Spread: St=(at-bt) (Best Ask - Best Bid)
+  ->Depth(at price level ppp): Total aggregate order Quantity available at price p
+
+###  LEVEL - I, LEVEL - II  and LEVEL - III data:
+        =>LEVEL I -- Top of Book
+            ->Diplays best bid & best ask
+            -> Shows corresponding aggregate sizes
+            -> Alos includes last traded price and volume
+            -> Basic view of the "inside market"
+
+        =>LEVEL II -- Market Depth
+            ->Shows multiple price levels on both bid and ask sides
+            ->Displays aggregated quantity at each price level
+            ->Provides visibility into order book depth
+            ->used for short-term trading and liquidity analysis
+
+        =>LEVEL III - Order Level Data:
+            ->Shows individual orders(not just aggregated levels)
+            ->Include order ID, Timestamps, modifications, executions, and cancellations
+            ->Provides full order life cycle information.
+            -> Typical Availbale to:
+                  -Exchange Members
+                  -Brokers
+                  -Market Makers
